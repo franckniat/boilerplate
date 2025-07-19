@@ -7,47 +7,13 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Navbar from "@/components/layouts/navbar";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
       {/* Navbar */}
-      <header className="border-b border-border/50">
-        <div className="container mx-auto flex items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <Image
-              className="dark:invert"
-              src="/next.svg"
-              alt="Next.js logo"
-              width={80}
-              height={20}
-              priority
-            />
-            <Separator orientation="vertical" className="h-4" />
-            <span className="text-sm font-semibold font-mono">Boilerplate</span>
-          </div>
-          <nav className="flex items-center gap-6">
-            <Link href="/docs" className="text-sm hover:text-primary transition-colors">
-              Documentation
-            </Link>
-            <Link href="/components" className="text-sm hover:text-primary transition-colors">
-              Composants
-            </Link>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="default" size="sm">
-                    Démarrer
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Commencer un nouveau projet</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="container mx-auto py-16 md:py-24 max-w-5xl">

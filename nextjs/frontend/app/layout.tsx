@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import { Mona_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 const mona_sans = Mona_Sans({
 	variable: "--font-mona-sans",
 	subsets: ["latin"],
 });
+
+const dm_Sans = localFont({
+	src: "./fonts/DMSans-Variable.ttf",
+	variable: "--font-dm-sans",
+})
 
 export const metadata: Metadata = {
 	title: "Next.js Boilerplate | Franck NIAT",
@@ -20,7 +26,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${mona_sans.className} ${mona_sans.variable} antialiased tracking-normal`}
+				className={`${dm_Sans.className} ${mona_sans.variable} antialiased tracking-normal`}
 			>
 				{children}
 			</body>
