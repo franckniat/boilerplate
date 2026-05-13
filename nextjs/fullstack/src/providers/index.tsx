@@ -3,6 +3,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "./theme-provider";
 import { ProgressProvider } from '@bprogress/next/app';
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -14,7 +15,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 options={{ showSpinner: false }}
                 shallowRouting
             >
-                {children}
+                <TooltipProvider>
+                    {children}
+                </TooltipProvider>
             </ProgressProvider>
         </ThemeProvider>
     );

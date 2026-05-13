@@ -2,6 +2,7 @@
 import React from "react";
 import { ThemeProvider } from "./theme-provider";
 import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
@@ -17,7 +18,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 				options={{ showSpinner: false }}
 				shallowRouting
 			>
-				{children}
+				<TooltipProvider>
+					{children}
+				</TooltipProvider>
 			</ProgressProvider>
 		</ThemeProvider>
 	);

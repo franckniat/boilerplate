@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# API Boilerplate Next.js
 
-## Getting Started
+Boilerplate front client pour consommer:
 
-First, run the development server:
+- une API externe (Laravel, NestJS, Rails, etc.)
+- ou une API interne Next.js (routes `app/api/*`)
+
+Stack principale:
+
+- Next.js App Router
+- TanStack React Query v5
+- UI shadcn
+- Theme clair/sombre via `next-themes`
+
+## Demarrage rapide
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Application: http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuration API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Le client HTTP est dans `lib/api-client.ts`.
 
-## Learn More
+- Si `NEXT_PUBLIC_API_URL` est defini, il est utilise.
+- Sinon, la valeur par defaut est `/api` (ideal pour des routes internes Next.js).
 
-To learn more about Next.js, take a look at the following resources:
+Exemple `.env.local` pour API externe:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Organisation
 
-## Deploy on Vercel
+- `lib/api-client.ts`: client HTTP centralise (token bearer, erreurs, normalisation)
+- `lib/query-client.ts`: config globale React Query
+- `lib/query-keys.ts`: factory de query keys
+- `hooks/use-auth.ts`: auth (login/register/logout/profile)
+- `hooks/use-users.ts`: CRUD users
+- `providers/index.tsx`: providers globaux (theme + query + tooltip)
+- `app/page.tsx`: playground API
+- `app/dashboard/page.tsx`: dashboard demo
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Internal API Next.js
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ce boilerplate est deja compatible avec une API interne Next.js:
+
+1. creer tes handlers `app/api/.../route.ts`
+2. laisser `NEXT_PUBLIC_API_URL` vide
+3. utiliser les hooks existants ou en creer de nouveaux
+
+## Ajouter une nouvelle ressource
+
+1. Ajouter des keys dans `lib/query-keys.ts`
+2. Creer un hook dans `hooks/` (`use-xxx.ts`)
+3. Exporter dans `hooks/index.ts`
+
+## Notes UI
+
+- `TooltipProvider` est monte globalement dans `providers/index.tsx`
+- Theme switcher disponible via `components/layouts/theme-switcher.tsx`
+
+## Documentation detaillee
+
+Voir `REACT_QUERY_GUIDE.md` pour les patterns avances (invalidations, mutations, etc.).
+
+Voir `AUTHENTICATION_GUIDE.md` pour l architecture auth (session cookie + bearer token), la configuration, et le troubleshooting.

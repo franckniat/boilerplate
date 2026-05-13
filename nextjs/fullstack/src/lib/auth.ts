@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { twoFactor, openAPI } from "better-auth/plugins"
+import { twoFactor, openAPI, username, admin } from "better-auth/plugins"
 import { sendVerificationEMail, sendResetPasswordEMail } from "./mail";
 import prisma from "./prisma";
 
@@ -20,12 +20,12 @@ export const auth = betterAuth({
     },
     socialProviders: {
         google: {
-            prompt: "select_account", 
+            prompt: "select_account",
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
             redirectURI: `${process.env.BETTER_AUTH_URL}/api/auth/callback/google`,
         },
-        github:{
+        github: {
             clientId: process.env.GITHUB_CLIENT_ID as string,
             clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
             redirectURI: `${process.env.BETTER_AUTH_URL}/api/auth/callback/github`,
@@ -33,8 +33,8 @@ export const auth = betterAuth({
     },
     emailVerification: {
         sendOnSignUp: true,
-		autoSignInAfterVerification: true,
-		expiresIn: 3600,
+        autoSignInAfterVerification: true,
+        expiresIn: 3600,
         sendVerificationEmail: async ({ user, token }) => {
             const verificationUrl = `${process.env.BETTER_AUTH_URL}/email-verified?token=${token}`;
             await sendVerificationEMail(user.email as string, verificationUrl);
@@ -43,7 +43,9 @@ export const auth = betterAuth({
     plugins: [
         twoFactor(),
         nextCookies(),
-        openAPI()
+        openAPI(),
+        username(),
+        admin()
     ]
 });
 

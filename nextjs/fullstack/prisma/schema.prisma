@@ -5,13 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/@app-name/prisma-client"
+  provider = "prisma-client"
+  output   = "../src/generated/client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -25,7 +24,17 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  twoFactorEnabled Boolean?    @default(false)
+  username         String?
+  displayUsername  String?
+  role             String?
+  banned           Boolean?    @default(false)
+  banReason        String?
+  banExpires       DateTime?
+  twofactors       TwoFactor[]
+
   @@map("user")
+  @@unique([username])
 }
 
 model Session {
@@ -39,8 +48,11 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  impersonatedBy String?
+
   @@unique([token])
   @@map("session")
+  @@index([userId])
 }
 
 model Account {
@@ -60,6 +72,7 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@map("account")
+  @@index([userId])
 }
 
 model Verification {
@@ -71,4 +84,18 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+  @@index([identifier])
+}
+
+model TwoFactor {
+  id          String   @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verified    Boolean? @default(true)
+
+  @@index([secret])
+  @@index([userId])
+  @@map("twoFactor")
 }
