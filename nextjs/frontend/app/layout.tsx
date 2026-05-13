@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Mona_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import Providers from "@/providers";
 
 const mona_sans = Mona_Sans({
 	variable: "--font-mona-sans",
@@ -24,11 +25,13 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<body
 				className={`${dm_Sans.className} ${mona_sans.variable} antialiased tracking-normal`}
 			>
-				{children}
+				<Providers>
+					{children}
+				</Providers>
 			</body>
 		</html>
 	);
