@@ -5,6 +5,7 @@ import { viewportOnce } from "@/lib/motion-presets"
 import { cn } from "@/lib/utils"
 
 type FadeInViewProps = HTMLMotionProps<"div"> & {
+  children: React.ReactNode
   delay?: number
 }
 
@@ -18,9 +19,9 @@ export function FadeInView({
 
   if (shouldReduceMotion) {
     return (
-      <div className={cn(className)} {...props}>
+      <motion.div className={cn(className)} {...props}>
         {children}
-      </div>
+      </motion.div>
     )
   }
 

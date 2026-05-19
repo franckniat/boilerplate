@@ -6,10 +6,12 @@ import { useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormMessage, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
-import { authClient } from "@/lib/auth-client";
+import { authClient, getErrorMessage } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { forgotPasswordSchema, ForgotPasswordSchema } from "@/schemas/user";
 import { useRouter } from "next/navigation";
+import z from "zod";
+import { getUserByEmail } from "@/actions/user";
 
 export function ForgotPasswordForm({
     className,
@@ -23,30 +25,40 @@ export function ForgotPasswordForm({
             email: "",
         }
     })
-    const onSubmit = async (data: ForgotPasswordSchema) => {
+    const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
         startTransition(async () => {
-            await authClient.forgetPassword({
-                email: data.email,
-                redirectTo: "/reset-password",
-            }, {
-                onRequest: () => {
-                    toast.info("Please wait ...")
+            const user = await getUserByEmail(data.email);
+            if (!user) {
+                toast.error("No account found with this email address.");
+                router.push("/forgot-password/error?emailNotFound=true");
+                return;
+            }
+            await authClient.requestPasswordReset(
+                {
+                    email: data.email,
+                    redirectTo: "/reset-password",
                 },
-                onSuccess: async () => {
-                    toast.success("Check your email", {
-                        description: "We have sent you a link to reset your password.",
-                    })
-                    router.push("/forgot-password/success")
-                },
-                onError: (error) => {
-                    console.log(error)
-                    toast.error("Something went wrong", {
-                        description: error.error.message ?? "Something went wrong",
-                    })
-                },
-            })
-        })
-    }
+                {
+                    onSuccess: async () => {
+                        toast.success("Check your email", {
+                            description: "We have sent you a link to reset your password.",
+                        });
+                        router.push("/forgot-password/success");
+                    },
+                    onError: (error) => {
+                        const errorMessage = getErrorMessage(error.error.code, "fr");
+                        if (!errorMessage) {
+                            toast.error("Something went wrong.");
+                            return;
+                        }
+                        toast.error(errorMessage!.title, {
+                            description: errorMessage!.description,
+                        });
+                    },
+                }
+            );
+        });
+    };
     return (
         <Form {...form}>
             <form className={cn("flex flex-col gap-6", className)} onSubmit={form.handleSubmit(onSubmit)} {...props}>
