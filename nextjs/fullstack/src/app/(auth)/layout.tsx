@@ -1,6 +1,7 @@
 import { Sparkles } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { AuthMotionPanel } from "@/components/motion/auth-motion-panel"
 
 
 export default function AuthLayout({
@@ -19,9 +20,9 @@ export default function AuthLayout({
                         app logo.
                     </Link>
                 </div>
-                {children}
+                <AuthMotionPanel>{children}</AuthMotionPanel>
             </div>
-            <div className="relative hidden bg-muted lg:block">
+            <div className="relative hidden overflow-hidden bg-linear-to-br from-violet-600/20 via-fuchsia-500/10 to-cyan-500/20 lg:block">
                 <Image
                     src="/images/auth-banner.png"
                     width={1200}

@@ -3,21 +3,13 @@
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { usePathname } from "next/navigation";
-import {
-    BookOpen,
-    ChefHat,
-    LayoutDashboard,
-    MessageCircle,
-    Search,
-    Settings,
-    ToolCase,
-    Wrench
-} from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarInset,
     SidebarMenu,
@@ -27,49 +19,16 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { getNavItemsByGroup } from "@/lib/dashboard-navigation";
 import SwitchTheme from "../layouts/switch-theme";
-import { Button } from "../ui/button";
-import { Kbd, KbdGroup } from "../ui/kbd";
 import { NavUser } from "./nav-user";
+import { DashboardCommandMenu } from "./dashboard-command-menu";
+import { PageEnter } from "@/components/motion/page-enter";
 import { authClient } from "@/lib/auth-client";
 
 type DashboardShellProps = {
     children: React.ReactNode;
 };
-
-type NavItem = {
-    href: string;
-    icon: React.ComponentType<{ className?: string }>;
-    fr: string;
-    en: string;
-};
-
-const NAV_ITEMS: NavItem[] = [
-    {
-        href: "/dashboard",
-        icon: LayoutDashboard,
-        fr: "Vue d'ensemble",
-        en: "Overview",
-    },
-    {
-        href: "/dashboard/items",
-        icon: ToolCase,
-        fr: "Items",
-        en: "Items",
-    },
-    {
-        href: "/dashboard/documents",
-        icon: BookOpen,
-        fr: "Documents",
-        en: "Documents",
-    },
-    {
-        href: "/dashboard/settings",
-        icon: Wrench,
-        fr: "Parametres",
-        en: "Settings",
-    },
-];
 
 const SIDEBAR_STORAGE_KEY = "dashboard.sidebar.open";
 
@@ -120,6 +79,9 @@ export function AppSidebar({ children }: DashboardShellProps) {
         }
     }, []);
 
+    const navItems = getNavItemsByGroup("navigation");
+    const adminItems = getNavItemsByGroup("admin");
+
     return (
         <div className="h-dvh overflow-hidden">
             <SidebarProvider
@@ -153,9 +115,11 @@ export function AppSidebar({ children }: DashboardShellProps) {
 
                     <SidebarContent className="min-h-0 overflow-y-auto overscroll-contain px-2 py-2">
                         <SidebarGroup className="p-0">
+                            <SidebarGroupLabel>
+                                Navigation
+                            </SidebarGroupLabel>
                             <SidebarMenu>
-                                {NAV_ITEMS.map((item) => {
-                                    const label = item.fr;
+                                {navItems.map((item) => {
                                     const active = isActivePath(pathname, item.href);
 
                                     return (
@@ -163,7 +127,7 @@ export function AppSidebar({ children }: DashboardShellProps) {
                                             <SidebarMenuButton
                                                 asChild
                                                 isActive={active}
-                                                tooltip={label}
+                                                tooltip={item.label}
                                                 className={cn(
                                                     "text-sm",
                                                     active && "shadow-xs"
@@ -171,7 +135,36 @@ export function AppSidebar({ children }: DashboardShellProps) {
                                             >
                                                 <Link href={item.href}>
                                                     <item.icon className="size-4" />
-                                                    <span>{label}</span>
+                                                    <span>{item.label}</span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroup>
+                        <SidebarGroup>
+                            <SidebarGroupLabel>
+                                Admin
+                            </SidebarGroupLabel>
+                            <SidebarMenu>
+                                {adminItems.map((item) => {
+                                    const active = isActivePath(pathname, item.href);
+
+                                    return (
+                                        <SidebarMenuItem key={item.href}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                isActive={active}
+                                                tooltip={item.label}
+                                                className={cn(
+                                                    "text-sm",
+                                                    active && "shadow-xs"
+                                                )}
+                                            >
+                                                <Link href={item.href}>
+                                                    <item.icon className="size-4" />
+                                                    <span>{item.label}</span>
                                                 </Link>
                                             </SidebarMenuButton>
                                         </SidebarMenuItem>
@@ -197,22 +190,15 @@ export function AppSidebar({ children }: DashboardShellProps) {
                                 <SidebarTrigger />
                                 <h1 className="truncate text-sm font-semibold">Dashboard</h1>
                             </div>
-                            <Button variant={"outline"} className="text-sm gap-3">
-                                <Search size={15} />
-                                Rechercher
-                                <KbdGroup>
-                                    <Kbd>Ctrl</Kbd>
-                                    <Kbd>K</Kbd>
-                                </KbdGroup>
-                            </Button>
+                            <DashboardCommandMenu />
                             <SwitchTheme />
                         </div>
                     </header>
 
                     <div className="h-full min-h-0 overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-2">
-                        <div className="mx-auto w-full max-w-6xl px-3 py-4 md:px-6 md:py-6 ">
+                        <PageEnter className="mx-auto w-full max-w-6xl px-3 py-4 md:px-6 md:py-6">
                             {children}
-                        </div>
+                        </PageEnter>
                     </div>
                 </SidebarInset>
             </SidebarProvider>
