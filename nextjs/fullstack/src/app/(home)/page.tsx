@@ -80,7 +80,7 @@ export default function HomePage() {
 
 						<div className="flex flex-wrap gap-3">
 							<Link
-								href="#features"
+								href="/dashboard"
 								className={cn(buttonVariants({ size: "lg" }), "gap-2")}
 							>
 								Explorer le starter

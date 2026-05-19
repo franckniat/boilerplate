@@ -7,10 +7,11 @@ import {
     BookOpen,
     ChefHat,
     LayoutDashboard,
-    MessageCircle,
     Search,
     Settings,
+    Tickets,
     ToolCase,
+    Users,
     Wrench
 } from "lucide-react";
 import {
@@ -18,6 +19,7 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarInset,
     SidebarMenu,
@@ -52,22 +54,37 @@ const NAV_ITEMS: NavItem[] = [
         en: "Overview",
     },
     {
-        href: "/dashboard/items",
-        icon: ToolCase,
-        fr: "Items",
-        en: "Items",
-    },
-    {
         href: "/dashboard/documents",
         icon: BookOpen,
         fr: "Documents",
         en: "Documents",
     },
     {
+        href: "/dashboard/items",
+        icon: ToolCase,
+        fr: "Items",
+        en: "Items",
+    },
+    {
         href: "/dashboard/settings",
-        icon: Wrench,
+        icon: Settings,
         fr: "Parametres",
         en: "Settings",
+    },
+];
+
+const NAV_ITEMS_ADMIN: NavItem[] = [
+    {
+        href: "/dashboard/users",
+        icon: Users,
+        fr: "Utilisateurs",
+        en: "Users",
+    },
+    {
+        href: "/dashboard/supports",
+        icon: Tickets,
+        fr: "Supports",
+        en: "Supports",
     },
 ];
 
@@ -153,8 +170,41 @@ export function AppSidebar({ children }: DashboardShellProps) {
 
                     <SidebarContent className="min-h-0 overflow-y-auto overscroll-contain px-2 py-2">
                         <SidebarGroup className="p-0">
+                            <SidebarGroupLabel>
+                                Navigation
+                            </SidebarGroupLabel>
                             <SidebarMenu>
                                 {NAV_ITEMS.map((item) => {
+                                    const label = item.fr;
+                                    const active = isActivePath(pathname, item.href);
+
+                                    return (
+                                        <SidebarMenuItem key={item.href}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                isActive={active}
+                                                tooltip={label}
+                                                className={cn(
+                                                    "text-sm",
+                                                    active && "shadow-xs"
+                                                )}
+                                            >
+                                                <Link href={item.href}>
+                                                    <item.icon className="size-4" />
+                                                    <span>{label}</span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroup>
+                        <SidebarGroup>
+                            <SidebarGroupLabel>
+                                Admin
+                            </SidebarGroupLabel>
+                            <SidebarMenu>
+                                {NAV_ITEMS_ADMIN.map((item) => {
                                     const label = item.fr;
                                     const active = isActivePath(pathname, item.href);
 
